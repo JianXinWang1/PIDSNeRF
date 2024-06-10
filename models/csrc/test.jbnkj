@@ -1,0 +1,11 @@
+#include "utils.h"
+#include "helper_math.h"
+#include <iostream>
+using namespace std;
+
+int main()
+{   
+    auto counter = torch::zeros({2}).data_ptr<int>();
+    cout << counter << endl;
+    return 0;
+}

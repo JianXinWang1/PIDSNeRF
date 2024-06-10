@@ -1,0 +1,17 @@
+#include "utils.h"
+#include "helper_math.h"
+#include <iostream>
+
+using namespace std;
+
+#define SQRT3 1.73205080757f
+
+
+
+int main()
+{   
+    float t1 = 0.01;
+    float b = sqrtf(t1);
+    return b;
+}
+
