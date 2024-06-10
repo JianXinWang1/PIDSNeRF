@@ -11,7 +11,7 @@ PIDSNeRF: Pose Interpolation Depth Supervision Neural Radiance Fields for View S
 
 * Cuda extension: Upgrade `pip` to >= 22.1 and run `pip install models/csrc/` (please run this each time you `pull` the code)
 
-## Supported Datasets
+## Datasets
 
   Colmap data
 
