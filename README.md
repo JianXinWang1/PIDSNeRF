@@ -1,4 +1,11 @@
 PIDSNeRF: Pose Interpolation Depth Supervision Neural Radiance Fields for View Synthesis from Challenging Input
+![Caption for the picture.](/figure/f1.png)
+
+## Hardware
+
+* OS: Ubuntu 20.04
+* NVIDIA GPU with Compute Compatibility >= 75 and memory > 6GB (Tested with RTX 3060), CUDA 11.3 (might work with older version)
+* 32GB RAM (in order to load full size images)
 
 ## Installing
 * Python>=3.8 (installation via [anaconda](https://www.anaconda.com/distribution/) is recommended, use `conda create -n ngp_pl python=3.8` to create a conda environment and activate it by `conda activate ngp_pl`)
@@ -26,5 +33,18 @@ For custom data, run `colmap` and get a folder `sparse/0` under which there are 
 
 Quickstart: `python train.py --root_dir <path/to/lego> --exp_name Lego`
 
+## Testing
 
+run `python show_gui.py` followed by the **same** hyperparameters used in training (`dataset_name`, `root_dir`, etc) and **add the checkpoint path** with `--ckpt_path <path/to/.ckpt>`
+
+# Comparison with Instan-NGP and DSNeRF from sparse inputs
+
+![Caption for the picture.](/figure/f2.png)
+
+# Comparison the depth map with DSNeRF
+![Caption for the picture.](/figure/f3.png)
+
+## Thanks
+
+Our code follows [kwea123](https://github.com/kwea123/ngp_pl) repositories. We appreciate him for making his codes available to the public.
 
