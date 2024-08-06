@@ -1,4 +1,4 @@
-## PIDSNeRF: Pose Interpolation Depth Supervision Neural Radiance Fields for View Synthesis from Challenging Input
+## [PIDSNeRF: Pose Interpolation Depth Supervision Neural Radiance Fields for View Synthesis from Challenging Input](https://link.springer.com/article/10.1007/s11042-024-19978-z)
 ![Caption for the picture.](/figure/f1.png)
 
 ## Hardware
