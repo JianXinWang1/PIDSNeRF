@@ -12,9 +12,6 @@ def get_train_pose_w2c(train_poses_c2w):
     train_poses_w2c = torch.cat(train_pose_list, dim=0)
     return train_poses_w2c
 
-
-
-
 def compute(H,W,K,pts,w2c):
 
     one_fill = torch.ones((pts.shape[0],1,1))
@@ -30,8 +27,8 @@ def compute(H,W,K,pts,w2c):
     pixel_index = pixel_index[valid_mask]
     index_depth = torch.cat((pixel_index,depths),dim=-1)
 
-
     return index_depth, valid_mask
+    
 def get_depth_update( pts3d,poses_interpolation,K):
     W = K[0,2]*2
     H = K[1,2]*2
@@ -60,9 +57,6 @@ def get_depth_update( pts3d,poses_interpolation,K):
     depth_value = torch.cat(depth_value)
 
     return depth_rays,depth_value
-
-
-
 
 # inverse weight
 def poses_interpolation(train_poses,pts_3d,trains_pts,num=0):
@@ -110,27 +104,32 @@ def poses_interpolation(train_poses,pts_3d,trains_pts,num=0):
     r = np.concatenate(poses_i_list)
     return r,pts_r
 
-# get depth rays
+# get depth rays and depth diffusion
 def get_depth_rays(data_list,poses,K,scale):
     depth_rays = []
     depth_value = []
     depth_weight = []
     pts = []
+    sqrt_two = 1.414
+    depth_diffusion = [(0, 0), (0, -1), (-1, 0), (1, 0), (0, 1), (1, 1), (1, -1), (-1, -1), (-1, 1)]
+    depth_k = [1, 1, 1, 1, 1, sqrt_two, sqrt_two, sqrt_two, sqrt_two]
     K = np.array(K)
     for i in range(len(data_list)):
         data_list[i]['depth'] /= scale
-        directions = np.concatenate(([(data_list[i]['coord'][:,0] - K[0, 2]) / K[0, 0]], [(data_list[i]['coord'][:,1] - K[1, 2]) / K[1, 1]],
-                                  [np.ones_like(data_list[i]['coord'][:,0])]),axis=0).T
-        rays_o, rays_d = get_rays(torch.tensor(directions).float(), torch.tensor(poses[i]).float())
-        pts_tem = rays_o + torch.tensor(data_list[i]['depth'][...,None]).float() * rays_d
-        pts.append(pts_tem)
-        rays_od = torch.cat((rays_o[:,None,...],rays_d[:,None,...]),dim=1)
-        depth_rays.append(rays_od)
-        depth_value.append(torch.tensor(data_list[i]['depth']).float())
+        for j in range(len(depth_diffusion)):
+            directions = np.concatenate(([(data_list[i]['coord'][:,0] + depth_diffusion[j][0] - K[0, 2]) / K[0, 0]], [(data_list[i]['coord'][:,1]+ depth_diffusion[j][1] - K[1, 2]) / K[1, 1]],
+                                      [np.ones_like(data_list[i]['coord'][:,0])]),axis=0).T
+            rays_o, rays_d = get_rays(torch.tensor(directions).float(), torch.tensor(poses[i]).float())
+            pts_tem = rays_o + torch.tensor(data_list[i]['depth'][...,None]).float() * rays_d
+            pts.append(pts_tem)
+            rays_od = torch.cat((rays_o[:,None,...],rays_d[:,None,...]),dim=1)
+            depth_rays.append(rays_od)
+            depth_value.append(torch.tensor(data_list[i]['depth']).float())
 
-        depth_weight.append(torch.tensor(data_list[i]['error']).float())
+            depth_weight.append(torch.tensor(data_list[i]['error']).float() * depth_k[j])
 
     return depth_rays, depth_value, depth_weight
+    
 def get_data_list(poses,images,points,factor):
 
     Errs = np.array([point3D.error for point3D in points.values()])
@@ -177,9 +176,6 @@ def get_ray_directions_train(W, H, pix, K,test=False):
         torch.stack([(u - cx + rand_uv) / fx, (v - cy + rand_uv) / fy, torch.ones_like(u)], -1)
 
     return directions
-
-
-
 
 
 
